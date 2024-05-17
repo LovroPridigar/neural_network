@@ -10,6 +10,21 @@ mnist = tf.keras.datasets.mnist
 stim_train = tf.keras.utils.normalize(stim_train, axis=1)
 stim_test = tf.keras.utils.normalize(stim_test, axis=1)
 
+images = [] #To je dejanski list vhodnih vektorjev za treniranje
+images_test = [] #Ta je za testiranje
+
+#Podatke, ki smo dobili iz mnist data baze popravimo, da so bolj primerni za racunanje
+for example in stim_train:
+    l = np.concatenate(example, axis=None) #pretvori vektor iz 28*28 v 784*1
+    l.shape = (784, 1) #popravi dimenzije
+    images.append(l)
+
+#Enako še za testne primere
+for example in stim_test:
+    l = np.concatenate(example, axis=None) 
+    l.shape = (784, 1)
+    images_test.append(l)
+
 #Število nevronov po slojih
 list = [784, 32, 10]
 size = len(list)
@@ -28,7 +43,6 @@ class Network(object):
     def __init__(self):
         self.weights = weights
         self.bias = bias
-    
     #Za vektor dražljaja velikosti 729 vrne odgovor nevronske mreže
     def Evaluate(self, stimulus):
         for i in range(size-1):
@@ -38,4 +52,3 @@ class Network(object):
     
     def CostFunction(self, input, result):
         return np.sum(np.square(self.Evaluate(input) - result))
-    
