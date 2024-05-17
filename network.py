@@ -1,8 +1,20 @@
 import numpy as np
-list = [27*27, 32, 10] # število nevronov po slojih
+import tensorflow as tf
+
+#Pripravimo primere za treniraje in testiranje
+mnist = tf.keras.datasets.mnist
+#(primeri za trening), (primeri za testiranje)
+(stim_train, sol_train), (stim_test, sol_test) = mnist.load_data()
+
+#Normaliziramo vhodne vektorje, na začetku so elementi števila med 0-250
+stim_train = tf.keras.utils.normalize(stim_train, axis=1)
+stim_test = tf.keras.utils.normalize(stim_test, axis=1)
+
+#Število nevronov po slojih
+list = [784, 32, 10]
 size = len(list)
 
-#zloadamo shranjene uteži in biase
+#Zloadamo shranjene uteži in biase
 weights = []
 bias = []
 for i in range(size-1):
@@ -16,13 +28,14 @@ class Network(object):
     def __init__(self):
         self.weights = weights
         self.bias = bias
-
-    def evaluate(self, input_vector):
+    
+    #Za vektor dražljaja velikosti 729 vrne odgovor nevronske mreže
+    def Evaluate(self, stimulus):
         for i in range(size-1):
             w, b = weights[i], bias[i]
-            input_vector = sigmoid(np.dot(w, input_vector) + b)
-        return input_vector
-      
-
-r = np.random.rand(27*27, 1)
-print(Network().evaluate(r))
+            stimulus = sigmoid(np.dot(w, stimulus) + b)
+        return stimulus
+    
+    def CostFunction(self, input, result):
+        return np.sum(np.square(self.Evaluate(input) - result))
+    

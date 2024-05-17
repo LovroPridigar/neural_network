@@ -1,5 +1,5 @@
 import numpy as np
-list = [27*27, 32, 10] # število nevronov po slojih
+list = [784, 32, 10] # število nevronov po slojih
 size = len(list)
 
 #inicializiramo uteži in biase
