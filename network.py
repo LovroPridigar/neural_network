@@ -1,29 +1,9 @@
 import numpy as np
 import tensorflow as tf
+from mnist import data
 
-#Pripravimo primere za treniraje in testiranje
-mnist = tf.keras.datasets.mnist
-#(primeri za trening), (primeri za testiranje)
-(stim_train, sol_train), (stim_test, sol_test) = mnist.load_data()
-
-#Normaliziramo vhodne vektorje, na začetku so elementi števila med 0-250
-stim_train = tf.keras.utils.normalize(stim_train, axis=1)
-stim_test = tf.keras.utils.normalize(stim_test, axis=1)
-
-images = [] #To je dejanski list vhodnih vektorjev za treniranje
-images_test = [] #Ta je za testiranje
-
-#Podatke, ki smo dobili iz mnist data baze popravimo, da so bolj primerni za racunanje
-for example in stim_train:
-    l = np.concatenate(example, axis=None) #pretvori vektor iz 28*28 v 784*1
-    l.shape = (784, 1) #popravi dimenzije
-    images.append(l)
-
-#Enako še za testne primere
-for example in stim_test:
-    l = np.concatenate(example, axis=None) 
-    l.shape = (784, 1)
-    images_test.append(l)
+#Zloadamo testne primere
+(images, label_train), (images_test, label_test) = data
 
 #Število nevronov po slojih
 list = [784, 32, 10]
