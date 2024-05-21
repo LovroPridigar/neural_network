@@ -1,6 +1,7 @@
 import numpy as np
 import tensorflow as tf
 from mnist import data
+import random
 
 #Zloadamo testne primere
 (images, label_train), (images_test, label_test) = data
@@ -26,6 +27,7 @@ class Network(object):
     def __init__(self, weights, bias):
         self.weights = weights
         self.bias = bias
+        self.learning_rate = 1
     #Za vektor dražljaja velikosti 729 vrne odgovor nevronske mreže
     def Eval(self, stimulus):
         a = []
@@ -48,17 +50,25 @@ class Network(object):
         a, z = self.Eval(stimulus)
         w = [np.zeros((784, 32)), np.zeros((32, 10))]
         b = [np.zeros((32, 1)), np.zeros((10, 1))]
-        for L in range(size-2, -1, -1):
+        for L in range(1, -1, -1):
             if L == 1:
                 for j in range(0, 10):
-                    b[L][j] = 2*(sigmoid(z[L][j]) - result[j]) * dsigmoid(z[j])
+                    b[L][j] = 2*(sigmoid(z[L][j]) - result[j])*dsigmoid(z[L][j])
                     for k in range(0, 32):
-                        w[L][k, j] = 2*(sigmoid(z[L][j]) - result[j]) * dsigmoid(z[j]) * a[L-1][k]
+                        w[L][k, j] = 2*(sigmoid(z[L][j]) - result[j]) * dsigmoid(z[L][j]) * a[L-1][k]
             else:
-                pass
+                for j in range(0, 32):
+                    b[L][j] = dsigmoid(z[L][j]) * (sum(self.weights[L+1][i, j] * dsigmoid(z[L+1][i]) * 2 * (a[L+1][i] - result[i]) for i in range(0, 10)))
+                    for k in range(0, 784):
+                        w[L][k, j] = stimulus[k] * dsigmoid(z[L][j]) * (sum(self.weights[L+1][i, j] * dsigmoid(z[L+1][i]) * 2 * (a[L+1][i] - result[i]) for i in range(0, 10)))
         return w, b
+    
+    def mini_batch(self, bach):
 
+
+        
 N = Network(weights, bias)
-stim = images[0]
-print(np.shape(label_train[0]))
-print(N.Gradient(stim, label_train[0]))
+w, b = N.Gradient(images[1], label_train[1])
+print(len(images))
+
+
